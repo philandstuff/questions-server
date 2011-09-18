@@ -20,8 +20,8 @@
 (defroutes main-routes
   (GET "/" [] "<h1>Hello World</h1>")
   (GET "/20-questions/latest" [] (str @data))
-  (PUT "/20-questions/latest" req
-       (let [body (read (java.io.PushbackReader. (reader (:body req))))]
+  (PUT "/20-questions/latest" {entity :body}
+       (let [body (read (java.io.PushbackReader. (reader entity)))]
          (dosync 
           (ensure data)
           (if (not (valid-update? @data body))

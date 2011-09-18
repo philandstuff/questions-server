@@ -22,14 +22,30 @@
                       "bill bailey")
     => truthy))
 
-(facts "valid-update?"
-  (fact "allows replacing an existing leaf with a new question"
+(facts "well-formed?"
+  (fact "a string is a well-formed question tree"
+    (well-formed? "Bill Bailey") => truthy)
+  (fact "a map with precisely the keys :question :yes :no is well-formed"
+    (well-formed? {:question "are you bill bailey?" :yes "bb" :no "foo"}) => truthy)
+  (fact "a map missing the :no key is not well formed"
+    (well-formed? {:question "eh?" :yes "bb"}) => falsey)
+  (fact "a map missing the :yes key is not well formed"
+    (well-formed? {:question "eh?" :no "bb"}) => falsey)
+  (fact "a map missing the :question key is not well formed"
+    (well-formed? {:no "eh?" :yes "bb"}) => falsey)
+  (fact "a map with a badly-formed submap is not well-formed"
+    (well-formed? {:question "foo?" :yes {:question "but no answers?"} :no "foo"}) => falsey)
+  (fact "a map with a well-formed submap is well-formed"
+    (well-formed? {:question "foo?" :yes {:question "a" :yes "b" :no "c"} :no "foo"}) => truthy,))
+
+(facts "valid-extension?"
+  (fact "allows replacing an existing leaf with a new question containing that leaf"
     (let
         [old-q (make-question "are you alive?" "Donald Rumsfeld" "George Washington")
          new-q (make-question "are you alive?"
                               (make-question "are you a politician?" "Donald Rumsfeld" "Rich Hickey")
                               "George Washington")]
-      (valid-update? old-q new-q) => truthy))
+      (valid-extension? old-q new-q) => truthy))
 
 
   (fact "doesn't allow replace an existing question with a leaf"
@@ -44,7 +60,7 @@
                               (make-question "are you american?"
                                              "George Washington"
                                              "Captain James Cook"))]
-      (valid-update? old-q new-q) => falsey))
+      (valid-extension? old-q new-q) => falsey))
 
   (fact "doesn't allow replacing a leaf with a question not containing that leaf"
     (let
@@ -56,5 +72,5 @@
                                              "tarzan"
                                              "richard o'brien")
                               "don't care")]
-      (valid-update? old-q new-q) => falsey))
-)
+      (valid-extension? old-q new-q) => falsey))
+  )

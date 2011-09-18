@@ -33,12 +33,27 @@ To GET the latest twenty questions data, as stringified clojure forms:
 
 To PUT a new version of the data:
 
-    curl -i -X PUT -d 'foo' localhost:8080/20-questions/latest
+    curl -i -X PUT -d '{:question "Are you alive?" :yes "Trevor McDonald" :no {:question "Are you a queen?" :yes "Elizabeth I" :no "Alan Turing"}}' localhost:8080/20-questions/latest
 
 or from a file named `mydata.clj`:
 
     curl -i -X PUT -d @mydata.clj localhost:8080/20-questions/latest
 
 Note that we use the `-i` option to show the full response. That way,
-you can see that if your data is not a valid extension of the existing
-data, you get a 409 Conflict response.
+you can see whether you got a 200 OK or 409 Conflict response.
+
+# Update rules
+
+The server works to ensure data integrity. It tries to follow two
+rules:
+
+ - Once a person is learned, they should never be forgotten. This
+   means, for example, that it should never accept a map which doesn't
+   contain Trevor McDonald and Elizabeth I, the initial two people in
+   the dataset.
+ - Once a question is learned, it should never be forgotten, and it
+   should be preserved in its original place. This means, for example,
+   that the root question should always be "Are you alive?"
+
+If an update is attempted which violates either of these rules, a 409
+Conflict HTTP response is issued.
