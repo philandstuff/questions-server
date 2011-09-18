@@ -13,9 +13,13 @@
    :body (str "your update is not a valid extension of the existing data: "
               existing-data)})
 
+(defn success-response [new-data]
+  {:status 200
+   :body (str "saved your request of " new-data)})
+
 (defroutes main-routes
   (GET "/" [] "<h1>Hello World</h1>")
-  (GET "/20-questions/latest" [] (str "updated! " @data))
+  (GET "/20-questions/latest" [] (str @data))
   (PUT "/20-questions/latest" req
        (let [body (read (java.io.PushbackReader. (reader (:body req))))]
          (dosync 
@@ -24,7 +28,7 @@
             (conflict-response @data)
             (do
               (ref-set data body)
-              (str "saved your request of " body))))))
+              (success-response body))))))
   (route/not-found "<h1>Page not found</h1>"))
 
 (defn -main [] (run-jetty (var main-routes) {:port 8080 :join? false}))
