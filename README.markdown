@@ -9,7 +9,7 @@ To run, just git clone and use leiningen to start the server:
 
     lein run
 
-The server should start on port 8080
+The server should start on port 8080.
 
 # Data format
 
