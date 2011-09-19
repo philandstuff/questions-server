@@ -28,7 +28,4 @@
           (valid-extension? (:yes old-q) (:yes new-q))
           (valid-extension? (:no old-q) (:no new-q)))))
 
-(defn valid-update? [old-tree new-tree]
-  (and
-   (well-formed? new-tree)
-   (valid-extension? old-tree new-tree)))
+

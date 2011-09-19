@@ -40,7 +40,8 @@ or from a file named `mydata.clj`:
     curl -i -X PUT -d @mydata.clj localhost:8080/20-questions/latest
 
 Note that we use the `-i` option to show the full response. That way,
-you can see whether you got a 200 OK or 409 Conflict response.
+you can see whether you got a 200 OK, 400 Bad Request or 409 Conflict
+response.
 
 # Update rules
 
@@ -56,4 +57,7 @@ rules:
    that the root question should always be "Are you alive?"
 
 If an update is attempted which violates either of these rules, a 409
-Conflict HTTP response is issued.
+Conflict HTTP response is issued. If an update is attempted which
+isn't even well-formed -- ie invalid Clojure syntax, or not in the
+form of a question tree as outlined above -- a 400 Bad Request
+response is issued.
